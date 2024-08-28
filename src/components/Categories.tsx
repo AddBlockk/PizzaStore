@@ -1,7 +1,9 @@
-import { useState } from "react";
+interface CategoriesProps {
+  value: number;
+  onClickCategory: (index: number) => void
+}
 
-function Categories() {
-  const [activeIndex, setActiveIndex] = useState(0);
+function Categories({ value, onClickCategory }: CategoriesProps) {
 
   const categories = [
     "Все",
@@ -15,15 +17,15 @@ function Categories() {
   return (
     <div className="categories">
       <ul>
-        {categories.map((value, i) => (
+        {categories.map((categoryName, i) => (
           <li
             key={i}
             onClick={() => {
-              setActiveIndex(i);
+              onClickCategory(i);
             }}
-            className={activeIndex === i ? "active" : ""}
+            className={value === i ? "active" : ""}
           >
-            {value}
+            {categoryName}
           </li>
         ))}
       </ul>
