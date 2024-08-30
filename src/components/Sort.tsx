@@ -1,13 +1,17 @@
 import { useState } from "react";
 
-function Sort() {
+interface SortProps {
+  value: number;
+  onChangeSort: (i: number) => void;
+}
+
+function Sort({ value, onChangeSort }: SortProps) {
   const [open, setOpen] = useState(false);
   const list = ["популярности", "цене", "алфавиту"];
-  const [activeList, setActiveList] = useState(0);
-  const sortName = list[activeList];
+  const sortName = list[value];
 
   const onClickListItem = (i: number) => {
-    setActiveList(i);
+    onChangeSort(i);
     setOpen(false);
   };
 
@@ -41,7 +45,7 @@ function Sort() {
             {list.map((name, i) => (
               <li
                 onClick={() => onClickListItem(i)}
-                className={activeList === i ? "active" : ""}
+                className={value === i ? "active" : ""}
                 key={i}
               >
                 {name}

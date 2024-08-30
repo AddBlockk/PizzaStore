@@ -1,10 +1,9 @@
 interface CategoriesProps {
   value: number;
-  onClickCategory: (index: number) => void
+  onClickCategory: (index: number) => void;
 }
 
 function Categories({ value, onClickCategory }: CategoriesProps) {
-
   const categories = [
     "Все",
     "Мясные",
