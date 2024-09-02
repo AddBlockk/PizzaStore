@@ -1,7 +1,4 @@
-interface CategoriesProps {
-  value: number;
-  onClickCategory: (index: number) => void;
-}
+import { CategoriesProps } from "../types/interfaces";
 
 function Categories({ value, onClickCategory }: CategoriesProps) {
   const categories = [

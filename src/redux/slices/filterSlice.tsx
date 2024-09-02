@@ -1,34 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
-export interface CounterState {
-  value: number;
-}
+import { CategoryId } from "../../types/interfaces";
 
-const initialState: CounterState = {
-  value: 0,
+const initialState: CategoryId = {
+  categoryId: 0,
+  sort: 0,
 };
 
-export const counterSlice = createSlice({
-  name: "counter",
+const filterSlice = createSlice({
+  name: "filters",
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    setCategoryId(state, action) {
+      state.categoryId = action.payload;
     },
-    decrement: (state) => {
-      state.value -= 1;
+    setSort(state, action) {
+      state.sort = action.payload;
     },
   },
 });
 
-export const { increment, decrement } = counterSlice.actions;
+export const { setCategoryId, setSort } = filterSlice.actions;
 
-export default counterSlice.reducer;
-
-// export interface CategoryId {
-//     categoryId: number;
-// }
-
-// const initialState: CategoryId = {
-//     categoryId: 0,
-//     sort:
-// }
+export default filterSlice.reducer;

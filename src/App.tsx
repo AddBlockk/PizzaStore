@@ -6,11 +6,7 @@ import Cart from "./pages/Cart";
 import { Route, Routes } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import { createContext, useState } from "react";
-
-interface SearchContextType {
-  searchValue: string;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-}
+import { SearchContextType } from "./types/interfaces";
 
 export const SearchContext = createContext<SearchContextType | undefined>(
   undefined

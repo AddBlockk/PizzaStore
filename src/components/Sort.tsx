@@ -1,22 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setSort } from "../redux/slices/filterSlice";
+import { SortState } from "../types/interfaces";
 
-interface SortProps {
-  value: number;
-  onChangeSort: (i: number) => void;
-}
-
-function Sort({ value, onChangeSort }: SortProps) {
+function Sort() {
+  const dispatch = useDispatch();
+  const sortRef = useRef<HTMLDivElement | null>(null);
+  const sort = useSelector((state: SortState) => state.filter.sort);
   const [open, setOpen] = useState(false);
   const list = ["популярности", "цене", "алфавиту"];
-  const sortName = list[value];
+  const sortName = list[sort];
 
-  const onClickListItem = (i: number) => {
-    onChangeSort(i);
+  const onClickListItem = (obj: number) => {
+    dispatch(setSort(obj));
     setOpen(false);
   };
 
+  useEffect(() => {
+    const handleClickOutsode = (event: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.body.addEventListener("click", handleClickOutsode);
+
+    return () => document.body.removeEventListener("click", handleClickOutsode);
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -45,7 +57,7 @@ function Sort({ value, onChangeSort }: SortProps) {
             {list.map((name, i) => (
               <li
                 onClick={() => onClickListItem(i)}
-                className={value === i ? "active" : ""}
+                className={sort === i ? "active" : ""}
                 key={i}
               >
                 {name}

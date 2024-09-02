@@ -6,28 +6,27 @@ import PizzaBlock from "../components/PizzaBlock";
 import { getDatabase, ref, get } from "firebase/database";
 import app from "../firebase";
 import { SearchContext } from "../App";
-
-interface Pizza {
-  id: number;
-  title: string;
-  price: number;
-  imageUrl: string;
-  sizes: number[];
-  types: number[];
-  category: number;
-  rating: number;
-}
+import { useSelector, useDispatch } from "react-redux";
+import { setCategoryId } from "../redux/slices/filterSlice";
+import { FilterState, Pizza } from "../types/interfaces";
 
 const Home = () => {
+  const dispatch = useDispatch();
+
+  const { categoryId, sort } = useSelector(
+    (state: FilterState) => state.filter
+  );
+  const sortType = sort;
+
   const { searchValue } = useContext(SearchContext) as {
     searchValue: string;
   };
   const [allItems, setAllItems] = useState<Pizza[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [categoryId, setCategoryId] = useState(0);
-  const [filteredItems, setFilteredItems] = useState<Pizza[]>([]);
-  const [sortedItems, setSortedItems] = useState<Pizza[]>([]);
-  const [sortType, setSortType] = useState(0);
+
+  const onClickCategory = (id: number) => {
+    dispatch(setCategoryId(id));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,26 +38,22 @@ const Home = () => {
         const data = snapshot.val();
         const pizzas: Pizza[] = Object.values(data);
         setAllItems(pizzas);
-        setFilteredItems(pizzas);
-        setSortedItems(pizzas);
         setIsLoading(false);
       } else {
         alert("error");
       }
     };
     fetchData();
-  }, [categoryId]);
+  }, []);
 
-  useEffect(() => {
-    if (categoryId === 0) {
-      setFilteredItems(allItems);
-    } else {
-      setFilteredItems(allItems.filter((item) => item.category === categoryId));
-    }
-  }, [categoryId, allItems]);
-
-  useEffect(() => {
-    const sortedItems = [...filteredItems].sort((a, b) => {
+  const filteredAndSortedItems = allItems
+    .filter((item) => {
+      if (categoryId === 0 || item.category === categoryId) {
+        return true;
+      }
+      return false;
+    })
+    .sort((a, b) => {
       switch (sortType) {
         case 0:
           return b.rating - a.rating;
@@ -69,15 +64,7 @@ const Home = () => {
         default:
           return 0;
       }
-    });
-    setSortedItems(sortedItems);
-  }, [sortType, filteredItems]);
-
-  const skeletons = [...new Array(6)].map((_, index) => (
-    <Skeleton key={index} />
-  ));
-
-  const pizzas = sortedItems
+    })
     .filter((obj) => {
       if (
         obj.title.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
@@ -85,17 +72,21 @@ const Home = () => {
         return true;
       }
       return false;
-    })
-    .map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+    });
+
+  const skeletons = [...new Array(6)].map((_, index) => (
+    <Skeleton key={index} />
+  ));
+
+  const pizzas = filteredAndSortedItems.map((obj) => (
+    <PizzaBlock key={obj.id} {...obj} />
+  ));
 
   return (
     <div className="conteiner">
       <div className="content__top">
-        <Categories
-          value={categoryId}
-          onClickCategory={(id) => setCategoryId(id)}
-        />
-        <Sort value={sortType} onChangeSort={(i) => setSortType(i)} />
+        <Categories value={categoryId} onClickCategory={onClickCategory} />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : pizzas}</div>

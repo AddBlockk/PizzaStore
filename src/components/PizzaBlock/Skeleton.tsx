@@ -1,13 +1,5 @@
 import ContentLoader from "react-content-loader";
-
-interface SkeletonProps {
-  speed?: number;
-  width?: number;
-  height?: number;
-  viewBox?: string;
-  backgroundColor?: string;
-  foregroundColor?: string;
-}
+import { SkeletonProps } from "../../types/interfaces";
 
 const Skeleton: React.FC<SkeletonProps> = (props) => (
   <ContentLoader
